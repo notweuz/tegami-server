@@ -1,13 +1,8 @@
 package main
 
 import (
-	"context"
-	"os"
-	"os/signal"
-	"syscall"
+	"tegami-server/internal/app"
 	"tegami-server/internal/config"
-	"tegami-server/internal/server"
-	"tegami-server/internal/platform/logger"
 
 	"github.com/rs/zerolog/log"
 )
@@ -24,26 +19,12 @@ import (
 //	@description				Enter "Bearer <token>" (token from /auth/login).
 
 func main() {
-	logger.Setup()
-	log.Info().Msg("starting server")
-
 	cfg, err := config.New(".")
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to load config")
 	}
-	logger.UpdateLevel(cfg.LogLevel)
-
-	srv, err := server.New(cfg)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create server")
+	
+	if err := app.Run(cfg); err != nil {
+		log.Fatal().Err(err).Msg("failed to start app")
 	}
-	srv.Start()
-
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
-	log.Debug().Msg("waiting for shutdown signal")
-	<-ctx.Done()
-
-	srv.Shutdown()
 }

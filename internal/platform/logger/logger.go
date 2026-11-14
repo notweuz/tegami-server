@@ -2,18 +2,19 @@ package logger
 
 import (
 	"os"
+	"tegami-server/internal/config"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-func Setup() {
+func Setup(cfg *config.Config) {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Caller().Logger()
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	updateLevel(cfg.LogLevel)
 }
 
-func UpdateLevel(new string) {
+func updateLevel(new string) {
 	lvl, err := zerolog.ParseLevel(new)
 	if err != nil {
 		log.Error().Str("lvl", new).Msg("Failed to parse log level")
