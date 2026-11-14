@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"tegami-server/internal/config"
 	"tegami-server/internal/platform/database"
+	"tegami-server/internal/platform/validation"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -28,6 +29,7 @@ func New(cfg *config.Config) (App, error) {
 		return nil, err
 	}
 
+	validation.Register()
 	gin.SetMode(cfg.GinMode)
 
 	r := gin.New()
