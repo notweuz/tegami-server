@@ -31,7 +31,7 @@ type Config struct {
 func New(path string) (*Config, error) {
 	v := viper.New()
 
-	v.AddConfigPath(filepath.Join(path, ".env"))
+	v.SetConfigFile(filepath.Join(path, ".env"))
 	v.SetConfigType("env")
 	v.AutomaticEnv()
 
