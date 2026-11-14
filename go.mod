@@ -1,4 +1,4 @@
-module tegami
+module tegami-server
 
 go 1.26.10
 
