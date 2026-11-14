@@ -38,3 +38,6 @@ configs/*
 
 # macOS specific
 .DS_STORE
+
+# Binaries
+bin/
