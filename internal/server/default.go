@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"context"
@@ -19,14 +19,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type app struct {
+type server struct {
 	DB  *gorm.DB
 	Gin *gin.Engine
 	Cfg *config.Config
 	Srv *http.Server
 }
 
-func New(cfg *config.Config) (App, error) {
+func New(cfg *config.Config) (Server, error) {
 	db, err := database.Setup(cfg)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to start database!")
@@ -50,7 +50,7 @@ func New(cfg *config.Config) (App, error) {
 		Handler: r.Handler(),
 	}
 
-	return &app{
+	return &server{
 		DB:  db,
 		Gin: r,
 		Cfg: cfg,
@@ -58,7 +58,7 @@ func New(cfg *config.Config) (App, error) {
 	}, nil
 }
 
-func (a *app) Start() {
+func (a *server) Start() {
 	go func() {
 		log.Info().Msg("starting server")
 		if err := a.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -67,8 +67,8 @@ func (a *app) Start() {
 	}()
 }
 
-func (a *app) Shutdown() {
-	log.Info().Msg("shutting down application")
+func (a *server) Shutdown() {
+	log.Info().Msg("shutting down server")
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
