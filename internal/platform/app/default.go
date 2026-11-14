@@ -12,6 +12,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -36,10 +38,11 @@ func New(cfg *config.Config) (App, error) {
 	r.Use(cors.Default())
 	r.HandleMethodNotAllowed = true
 
-	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", cfg.AppPort),
-		Handler: r.Handler(),
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", cfg.AppPort),
+		Handler: r.Handler(),
 	}
 
 	return &app{

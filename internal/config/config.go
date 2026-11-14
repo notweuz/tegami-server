@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	minJWTSecretLen  = 32
-	defaultJWTSecret = "secret"
-	defaultAppPort   = 8080
-	defaultLogLevel  = "info"
+	minJWTSecretLen    = 32
+	defaultJWTSecret   = "secret"
+	defaultAppPort     = 8080
+	defaultLogLevel    = "info"
 	defaultDatabaseDSN = "host=localhost user=postgres password=postgres dbname=tegami-server port=5432 sslmode=disable"
-	defaultGinMode = "debug"
+	defaultGinMode     = "debug"
 )
 
 type Config struct {

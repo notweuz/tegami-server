@@ -1,0 +1,14 @@
+basePath: /api
+info:
+  contact: {}
+  description: API documentation for Tegami Server.
+  title: Tegami API
+  version: "0.1"
+paths: {}
+securityDefinitions:
+  BearerAuth:
+    description: Enter "Bearer <token>" (token from /auth/login).
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

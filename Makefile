@@ -8,3 +8,6 @@ run: build
 
 clean:
 	rm -rf ./bin
+
+swag:
+	swag init -d ./cmd/tegami-server

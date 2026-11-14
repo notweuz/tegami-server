@@ -12,6 +12,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+//	@title			Tegami API
+//	@version		0.1
+//	@description	API documentation for Tegami Server.
+
+//	@BasePath	/api
+
+//	@securityDefinitions.apiKey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Enter "Bearer <token>" (token from /auth/login).
+
 func main() {
 	logger.Setup()
 	log.Info().Msg("starting server")
@@ -30,7 +41,7 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
-	
+
 	log.Debug().Msg("waiting for shutdown signal")
 	<-ctx.Done()
 
