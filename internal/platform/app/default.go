@@ -9,6 +9,8 @@ import (
 	"tegami-server/internal/platform/validation"
 	"time"
 
+	_ "tegami-server/docs"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -38,7 +40,10 @@ func New(cfg *config.Config) (App, error) {
 	r.Use(cors.Default())
 	r.HandleMethodNotAllowed = true
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if cfg.ExposeSwagger {
+		log.Info().Msg("expose swagger is enabling, creating swagger endpoint")
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.AppPort),

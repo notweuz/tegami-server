@@ -12,20 +12,22 @@ import (
 )
 
 const (
-	minJWTSecretLen    = 32
-	defaultJWTSecret   = "secret"
-	defaultAppPort     = 8080
-	defaultLogLevel    = "info"
-	defaultDatabaseDSN = "host=localhost user=postgres password=postgres dbname=tegami-server port=5432 sslmode=disable"
-	defaultGinMode     = "debug"
+	minJWTSecretLen      = 32
+	defaultJWTSecret     = "secret"
+	defaultAppPort       = 8080
+	defaultLogLevel      = "info"
+	defaultDatabaseDSN   = "host=localhost user=postgres password=postgres dbname=tegami-server port=5432 sslmode=disable"
+	defaultExposeSwagger = false
+	defaultGinMode       = "debug"
 )
 
 type Config struct {
-	DatabaseDSN string `mapstructure:"DATABASE_DSN" validate:"required"`
-	JWTSecret   string `mapstructure:"JWT_SECRET" validate:"required"`
-	LogLevel    string `mapstructure:"LOG_LEVEL" validate:"oneof=trace debug info warn error fatal panic disabled"`
-	AppPort     int    `mapstructure:"APP_PORT" validate:"min=1,max=65535"`
-	GinMode     string `mapstructure:"GIN_MODE" validate:"oneof=debug release test"`
+	DatabaseDSN   string `mapstructure:"DATABASE_DSN" validate:"required"`
+	JWTSecret     string `mapstructure:"JWT_SECRET" validate:"required"`
+	LogLevel      string `mapstructure:"LOG_LEVEL" validate:"oneof=trace debug info warn error fatal panic disabled"`
+	AppPort       int    `mapstructure:"APP_PORT" validate:"min=1,max=65535"`
+	GinMode       string `mapstructure:"GIN_MODE" validate:"oneof=debug release test"`
+	ExposeSwagger bool   `mapstructure:"EXPOSE_SWAGGER" validate:"required"`
 }
 
 func New(path string) (*Config, error) {
@@ -40,6 +42,7 @@ func New(path string) (*Config, error) {
 	v.SetDefault("JWT_SECRET", defaultJWTSecret)
 	v.SetDefault("DATABASE_DSN", defaultDatabaseDSN)
 	v.SetDefault("GIN_MODE", defaultGinMode)
+	v.SetDefault("EXPOSE_SWAGGER", defaultExposeSwagger)
 
 	err := v.ReadInConfig()
 	if err != nil {

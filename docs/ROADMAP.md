@@ -12,14 +12,14 @@ This file provides an overview of the direction this project is heading. During 
 ## M0: Core.
 In this phase, the focus is on core of the project. This includes setting up the initial structure of the server application, defining the main entrypoint, setting up gin with swagger endpoint and gorm.
 
-- [ ] **Structure & Tooling:**
+- [x] **Structure & Tooling:**
   - [x] Initialize Go module and project layout
   - [x] Set up config loader
   - [x] Create basic `Makefile`
 - [ ] **Web Server & Docs:**
   - [ ] Initialize Gin router with Recovery, Logger, and CORS middlewares
   - 🚧 Add `GET /health` endpoint and graceful shutdown handling
-  - [ ] Integrate `swaggo/swag` and expose `/swagger/*any` UI endpoint (if config specifically says it should be public)
+  - [x] Integrate `swaggo/swag` and expose `/swagger/*any` UI endpoint (if config specifically says it should be public)
 - [x] **Database:**
   - [x] Configure GORM connection with PostgreSQL driver
   - [x] Set up database migrations using goose
