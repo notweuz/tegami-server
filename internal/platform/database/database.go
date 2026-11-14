@@ -21,11 +21,11 @@ func Setup(cfg *config.Config) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to setup db: %w", err)
 	}
 	log.Info().Msg("connected to database")
-	err = migrate(db)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to migrate database")
-		return nil, fmt.Errorf("failed to migrate db: %w", err)
-	}
+	// err = migrate(db)
+	// if err != nil {
+	// 	log.Error().Err(err).Msg("failed to migrate database")
+	// 	return nil, fmt.Errorf("failed to migrate db: %w", err)
+	// }
 
 	log.Info().Msg("database migrated successfully")
 	return db, nil
