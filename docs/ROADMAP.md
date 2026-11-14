@@ -14,7 +14,7 @@ In this phase, the focus is on core of the project. This includes setting up the
 
 - [ ] **Structure & Tooling:**
   - [ ] Initialize Go module and project layout
-  - [ ] Set up config loader
+  - [x] Set up config loader
   - [ ] Create basic `Makefile`
 - [ ] **Web Server & Docs:**
   - [ ] Initialize Gin router with Recovery, Logger, and CORS middlewares
