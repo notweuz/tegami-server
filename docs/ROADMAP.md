@@ -21,8 +21,8 @@ In this phase, the focus is on core of the project. This includes setting up the
   - [ ] Add `GET /health` endpoint and graceful shutdown handling
   - [ ] Integrate `swaggo/swag` and expose `/swagger/*any` UI endpoint (if config specifically says it should be public)
 - [ ] **Database:**
-  - [ ] Configure GORM connection with PostgreSQL driver and connection pool settings
-  - [ ] Set up database migrations using 
+  - [x] Configure GORM connection with PostgreSQL driver
+  - [x] Set up database migrations using goose
 
 ## M1: Auth and Users.
 In this phase, the focus is on establishing basic authorization and a user database.
