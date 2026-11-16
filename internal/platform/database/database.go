@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"tegami-server/internal/config"
+	"tegami-server/migrations"
 
 	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog/log"
@@ -21,13 +22,11 @@ func Setup(cfg *config.Config) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to setup db: %w", err)
 	}
 	log.Info().Msg("connected to database")
-	// err = migrate(db)
-	// if err != nil {
-	// 	log.Error().Err(err).Msg("failed to migrate database")
-	// 	return nil, fmt.Errorf("failed to migrate db: %w", err)
-	// }
+	err = migrate(db)
+	if err != nil {
+		return nil, fmt.Errorf("failed to migrate db: %w", err)
+	}
 
-	log.Info().Msg("database migrated successfully")
 	return db, nil
 }
 
@@ -37,9 +36,13 @@ func migrate(gormDB *gorm.DB) error {
 		return fmt.Errorf("failed to get db: %w", err)
 	}
 
-	// TODO: migrations
-	// goose.SetBaseFS(migrations.FS)
-	// goose.SetDialect("pgx")
+	goose.SetBaseFS(migrations.FS)
+	goose.SetDialect("pgx")
 
-	return goose.Up(db, ".")
+	if err := goose.Up(db, "."); err != nil {
+		log.Error().Err(err).Msg("failed to migrate database")
+		return err
+	}
+	log.Info().Msg("migrated successfully") // TODO: more specific logic, how many migrations, etc. (if goose has that functionality)
+	return nil
 }
