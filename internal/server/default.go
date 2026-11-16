@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"tegami-server/internal/config"
+	"tegami-server/internal/middleware"
 	"tegami-server/internal/platform/database"
 	"tegami-server/internal/validator"
 	"time"
@@ -37,8 +38,14 @@ func New(cfg *config.Config) (Server, error) {
 	gin.SetMode(cfg.GinMode)
 
 	r := gin.New()
+	r.Use(gin.CustomRecovery(middleware.Recovery()))
+	r.Use(middleware.Logger())
 	r.Use(cors.Default())
+	// r.Use(middleware.Error()) // TODO: error handler
+
 	r.HandleMethodNotAllowed = true
+	r.NoRoute(middleware.NoRoute())
+	r.NoMethod(middleware.NoMethod())
 
 	if cfg.ExposeSwagger {
 		log.Info().Msg("expose swagger is enabling, creating swagger endpoint")
