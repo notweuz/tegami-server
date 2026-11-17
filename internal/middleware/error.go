@@ -22,11 +22,9 @@ var statusMap = map[errs.Kind]int{
 	errs.BadGateway:       http.StatusBadGateway,
 }
 
-func parseStatus(kind errs.Kind) int {
-	if v, ok := statusMap[kind]; ok {
-		return v
-	}
-	return http.StatusInternalServerError
+func parseStatus(kind errs.Kind) (int, bool) {
+	status, ok := statusMap[kind]
+	return status, ok
 }
 
 var internalServerError = errs.New(errs.Internal, "INTERNAL_SERVER_ERROR", "An internal server error has occurred", errs.ErrInternalServer)
@@ -45,7 +43,12 @@ func Error() gin.HandlerFunc {
 			appErr = internalServerError
 		}
 
-		status := parseStatus(appErr.Kind)
+		status, ok := parseStatus(appErr.Kind)
+		if !ok {
+			appErr = internalServerError
+    		status = http.StatusInternalServerError
+		}
+		
 		if status >= http.StatusInternalServerError {
 			log.Error().Err(err).
 				Str("method", c.Request.Method).
