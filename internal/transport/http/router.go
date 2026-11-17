@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"tegami-server/internal/config"
 	"tegami-server/internal/middleware"
-	"tegami-server/internal/transform/http/health"
+	"tegami-server/internal/transport/http/health"
 	healthModule "tegami-server/internal/modules/health"
 	"time"
 
