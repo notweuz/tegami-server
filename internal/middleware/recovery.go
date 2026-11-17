@@ -15,6 +15,11 @@ func Recovery() gin.RecoveryFunc {
             Stack().
             Msg("panic recovered")
 
+		if c.Writer.Written() {
+			c.Abort()
+			return
+		}
+
 		c.AbortWithStatusJSON(
             http.StatusInternalServerError,
             httpError.NewResponse(
