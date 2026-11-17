@@ -30,8 +30,8 @@ type router struct {
 func NewRouter(db *gorm.DB, cfg *config.Config) (*router, error) {
 	r := gin.New()
 	r.Use(
-		gin.CustomRecovery(middleware.Recovery()),
 		middleware.Logger(),
+		gin.CustomRecovery(middleware.Recovery()),
 		cors.Default(),
 		middleware.Error(),
 	)
