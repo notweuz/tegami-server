@@ -47,7 +47,7 @@ func NewRouter(db *gorm.DB, cfg *config.Config) (*router, error) {
 
 	baseDB, err := db.DB()
 	if err != nil {
-		return nil, fmt.Errorf("router db get: %w")
+		return nil, fmt.Errorf("router db get: %w", err)
 	}
 
 	healthSVC := healthModule.NewService(baseDB)
