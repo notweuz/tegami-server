@@ -1,9 +1,9 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"tegami-server/internal/config"
-	"tegami-server/migrations"
 
 	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog/log"
@@ -36,13 +36,17 @@ func migrate(gormDB *gorm.DB) error {
 		return fmt.Errorf("failed to get db: %w", err)
 	}
 
-	goose.SetBaseFS(migrations.FS)
-	goose.SetDialect("pgx")
+	provider, err := goose.NewProvider(goose.DialectPostgres, db, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create goose provider: %w", err)
+	}
 
-	if err := goose.Up(db, "."); err != nil {
+	res, err := provider.Up(context.Background())
+	if err != nil {
 		log.Error().Err(err).Msg("failed to migrate database")
 		return err
 	}
-	log.Info().Msg("migrated successfully") // TODO: more specific logic, how many migrations, etc. (if goose has that functionality)
+
+	log.Info().Int("amount", len(res)).Msg("migrated successfully")
 	return nil
 }
