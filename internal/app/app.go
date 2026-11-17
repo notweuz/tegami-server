@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"tegami-server/internal/config"
 	"tegami-server/internal/platform/logger"
-	"tegami-server/internal/transform/http"
+	"tegami-server/internal/transport/http"
 
 	"github.com/rs/zerolog/log"
 )

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"tegami-server/internal/config"
 	"tegami-server/internal/middleware"
-	"tegami-server/internal/transport/http/health"
 	healthModule "tegami-server/internal/modules/health"
+	"tegami-server/internal/transport/http/health"
 	"time"
 
 	_ "tegami-server/docs"
@@ -29,10 +29,12 @@ type router struct {
 
 func NewRouter(db *gorm.DB, cfg *config.Config) (*router, error) {
 	r := gin.New()
-	r.Use(gin.CustomRecovery(middleware.Recovery()))
-	r.Use(middleware.Logger())
-	r.Use(cors.Default())
-	// r.Use(middleware.Error()) // TODO: error handler
+	r.Use(
+		gin.CustomRecovery(middleware.Recovery()),
+		middleware.Logger(),
+		cors.Default(),
+		middleware.Error(),
+	)
 
 	r.HandleMethodNotAllowed = true
 	r.NoRoute(middleware.NoRoute())
@@ -53,7 +55,7 @@ func NewRouter(db *gorm.DB, cfg *config.Config) (*router, error) {
 
 	// TODO: registrar interface
 	api := r.Group("/api")
-	{ 
+	{
 		api.GET("/health", healthHandler.GetInfo)
 	}
 
