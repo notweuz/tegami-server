@@ -54,6 +54,11 @@ func Error() gin.HandlerFunc {
 				Str("method", c.Request.Method).
 				Str("path", c.Request.URL.Path).
 				Msg("request failed")
+		} else if status >= http.StatusBadRequest {
+			log.Warn().Err(err).
+				Str("method", c.Request.Method).
+				Str("path", c.Request.URL.Path).
+				Msg("request failed")
 		}
 
 		resp := httpError.NewResponse(appErr.Code, appErr.Message, util.MapToList(appErr.Fields, httpError.NewFieldError))
