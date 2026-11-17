@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"tegami-server/internal/config"
 	"tegami-server/internal/middleware"
-	"tegami-server/internal/platform/database"
-	"tegami-server/internal/validator"
+	"tegami-server/internal/transform/http/health"
+	healthModule "tegami-server/internal/modules/health"
 	"time"
 
 	_ "tegami-server/docs"
@@ -20,23 +20,14 @@ import (
 	"gorm.io/gorm"
 )
 
-type server struct {
+type router struct {
 	DB  *gorm.DB
 	Gin *gin.Engine
 	Cfg *config.Config
 	Srv *http.Server
 }
 
-func New(cfg *config.Config) (Server, error) {
-	db, err := database.Setup(cfg)
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to start database!")
-		return nil, err
-	}
-
-	validator.Register()
-	gin.SetMode(cfg.GinMode)
-
+func NewRouter(db *gorm.DB, cfg *config.Config) (*router, error) {
 	r := gin.New()
 	r.Use(gin.CustomRecovery(middleware.Recovery()))
 	r.Use(middleware.Logger())
@@ -52,12 +43,26 @@ func New(cfg *config.Config) (Server, error) {
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
+	baseDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("router db get: %w")
+	}
+
+	healthSVC := healthModule.NewService(baseDB)
+	healthHandler := health.NewHandler(healthSVC)
+
+	// TODO: registrar interface
+	api := r.Group("/api")
+	{ 
+		api.GET("/health", healthHandler.GetInfo)
+	}
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.AppPort),
 		Handler: r.Handler(),
 	}
 
-	return &server{
+	return &router{
 		DB:  db,
 		Gin: r,
 		Cfg: cfg,
@@ -65,23 +70,23 @@ func New(cfg *config.Config) (Server, error) {
 	}, nil
 }
 
-func (a *server) Start() {
+func (a *router) Start() {
 	go func() {
-		log.Info().Msg("starting server")
+		log.Info().Msg("starting http router")
 		if err := a.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Error().Err(err).Msg("failed to start server")
+			log.Error().Err(err).Msg("failed to start http server")
 		}
 	}()
 }
 
-func (a *server) Shutdown() {
-	log.Info().Msg("shutting down server")
+func (a *router) Shutdown() {
+	log.Info().Msg("shutting down http router")
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	if err := a.Srv.Shutdown(ctx); err != nil {
-		log.Error().Err(err).Msg("failed to graceful shutdown")
-	} else {
-		log.Info().Msg("server gracefully stopped")
+		log.Error().Err(err).Msg("failed to gracefully shutdown http router")
+		return
 	}
+	log.Info().Msg("http router successful graceful shutdown")
 }

@@ -18,7 +18,7 @@ In this phase, the focus is on core of the project. This includes setting up the
   - [x] Create basic `Makefile`
 - [ ] **Web Server & Docs:**
   - [x] Initialize Gin router with Recovery, Logger, and CORS middlewares
-  - 🚧 Add `GET /health` endpoint and graceful shutdown handling
+  - [x] Add `GET /health` endpoint and graceful shutdown handling
   - [x] Integrate `swaggo/swag` and expose `/swagger/*any` UI endpoint (if config specifically says it should be public)
   - [ ] Make and integrate into router `ErrorHandler` middleware
 - [x] **Database:**
