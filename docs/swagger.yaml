@@ -3,10 +3,13 @@ definitions:
   health.InfoResponse:
     properties:
       commit:
+        example: 2acec66b3b1efbe040f738b18cbb7f60f841fddc
         type: string
       status:
+        example: UP
         type: string
       uptime:
+        example: 12.666100458s
         type: string
     type: object
 info:

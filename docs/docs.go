@@ -41,13 +41,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "commit": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2acec66b3b1efbe040f738b18cbb7f60f841fddc"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "UP"
                 },
                 "uptime": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "12.666100458s"
                 }
             }
         }
