@@ -20,6 +20,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type RouterRegistrar interface {
+	RegisterRoutes(r *gin.RouterGroup)
+}
+
 type router struct {
 	DB  *gorm.DB
 	Gin *gin.Engine
@@ -51,13 +55,13 @@ func NewRouter(db *gorm.DB, cfg *config.Config) (*router, error) {
 	}
 
 	healthSVC := healthModule.NewService(baseDB)
-	healthHandler := health.NewHandler(healthSVC)
 
 	// TODO: registrar interface
 	api := r.Group("/api")
-	{
-		api.GET("/health", healthHandler.GetInfo)
-	}
+	
+	registerHandlers(api,
+		health.NewHandler(healthSVC),
+	)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.AppPort),
@@ -91,4 +95,10 @@ func (a *router) Shutdown() {
 		return
 	}
 	log.Info().Msg("http router successful graceful shutdown")
+}
+
+func registerHandlers(r *gin.RouterGroup, handlers ...RouterRegistrar) {
+	for _, h := range handlers {
+		h.RegisterRoutes(r)
+	}
 }

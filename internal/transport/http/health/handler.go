@@ -36,3 +36,7 @@ func (h *Handler) GetInfo(c *gin.Context) {
 	dto := NewInfoResponse(health.Status, health.Commit, health.Uptime)
 	c.JSON(http.StatusOK, dto)
 }
+
+func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
+	r.GET("/health", h.GetInfo)
+}
