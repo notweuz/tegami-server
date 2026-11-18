@@ -11,9 +11,9 @@ import (
 func Recovery() gin.RecoveryFunc {
 	return func(c *gin.Context, recovered any) {
 		log.Error().
-            Interface("panic", recovered).
-            Stack().
-            Msg("panic recovered")
+			Interface("panic", recovered).
+			Stack().
+			Msg("panic recovered")
 
 		if c.Writer.Written() {
 			c.Abort()
@@ -21,12 +21,12 @@ func Recovery() gin.RecoveryFunc {
 		}
 
 		c.AbortWithStatusJSON(
-            http.StatusInternalServerError,
-            httpError.NewResponse(
-                "INTERNAL_SERVER_ERROR",
-                "An internal server error has occurred",
-                nil,
-            ),
-        )
+			http.StatusInternalServerError,
+			httpError.NewResponse(
+				"INTERNAL_SERVER_ERROR",
+				"An internal server error has occurred",
+				nil,
+			),
+		)
 	}
 }

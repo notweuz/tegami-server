@@ -46,9 +46,9 @@ func Error() gin.HandlerFunc {
 		status, ok := parseStatus(appErr.Kind)
 		if !ok {
 			appErr = internalServerError
-    		status = http.StatusInternalServerError
+			status = http.StatusInternalServerError
 		}
-		
+
 		if status >= http.StatusInternalServerError {
 			log.Error().Err(err).
 				Str("method", c.Request.Method).

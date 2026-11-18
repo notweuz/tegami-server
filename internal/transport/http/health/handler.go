@@ -22,6 +22,14 @@ func NewHandler(svc Service) *Handler {
 	}
 }
 
+// GetInfo godoc
+//
+//	@Summary		Get app health
+//	@Description	Returns the current status of the app.
+//	@Tags			status
+//	@Produce		json
+//	@Success		200	{object}	InfoResponse
+//	@Router			/health [get]
 func (h *Handler) GetInfo(c *gin.Context) {
 	health := h.svc.GetInfo(c.Request.Context())
 

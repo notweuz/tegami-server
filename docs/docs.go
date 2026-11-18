@@ -14,7 +14,44 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {},
+    "paths": {
+        "/health": {
+            "get": {
+                "description": "Returns the current status of the app.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "status"
+                ],
+                "summary": "Get app health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/health.InfoResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "health.InfoResponse": {
+            "type": "object",
+            "properties": {
+                "commit": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "uptime": {
+                    "type": "string"
+                }
+            }
+        }
+    },
     "securityDefinitions": {
         "BearerAuth": {
             "description": "Enter \"Bearer \u003ctoken\u003e\" (token from /auth/login).",

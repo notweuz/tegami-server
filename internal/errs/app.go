@@ -37,7 +37,7 @@ func (e *AppError) WithErr(err error) *AppError {
 	cp := *e
 	cp.Err = err
 	return &cp
-} 
+}
 
 func (e *AppError) Unwrap() error {
 	return e.Err

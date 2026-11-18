@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"tegami-server/internal/config"
-	"tegami-server/internal/transport/http/middleware"
 	healthModule "tegami-server/internal/modules/health"
 	"tegami-server/internal/transport/http/health"
+	"tegami-server/internal/transport/http/middleware"
 	"time"
 
 	_ "tegami-server/docs"

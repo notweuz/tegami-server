@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to load config")
 	}
-	
+
 	if err := app.Run(cfg); err != nil {
 		log.Fatal().Err(err).Msg("failed to start app")
 	}

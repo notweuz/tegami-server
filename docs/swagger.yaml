@@ -1,10 +1,33 @@
 basePath: /api
+definitions:
+  health.InfoResponse:
+    properties:
+      commit:
+        type: string
+      status:
+        type: string
+      uptime:
+        type: string
+    type: object
 info:
   contact: {}
   description: API documentation for Tegami Server.
   title: Tegami API
   version: "0.1"
-paths: {}
+paths:
+  /health:
+    get:
+      description: Returns the current status of the app.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/health.InfoResponse'
+      summary: Get app health
+      tags:
+      - status
 securityDefinitions:
   BearerAuth:
     description: Enter "Bearer <token>" (token from /auth/login).
