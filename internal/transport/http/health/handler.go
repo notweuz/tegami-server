@@ -37,6 +37,6 @@ func (h *Handler) GetInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, dto)
 }
 
-func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
+func (h *Handler) RegisterHandlers(r *gin.RouterGroup) {
 	r.GET("/health", h.GetInfo)
 }

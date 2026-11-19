@@ -8,12 +8,13 @@ import (
 	"syscall"
 	"tegami-server/internal/config"
 	"tegami-server/internal/platform/logger"
-	"tegami-server/internal/transport/http"
+	"tegami-server/internal/transport"
 
 	"github.com/rs/zerolog/log"
 )
 
 type Server interface {
+	Start()
 	Shutdown()
 }
 
@@ -21,10 +22,11 @@ func Run(cfg *config.Config) error {
 	logger.Setup(cfg)
 	log.Info().Msg("starting server")
 
-	srv, err := http.New(cfg)
+	srv, err := transport.New(cfg)
 	if err != nil {
-		return fmt.Errorf("failed to start http server: %w", err)
+		return fmt.Errorf("failed to create server: %w", err)
 	}
+	srv.Start()
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
