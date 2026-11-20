@@ -29,8 +29,8 @@ type Router interface {
 type server struct {
 	httpRouter Router
 
-	gin        *gin.Engine
-	srv        *http.Server
+	gin *gin.Engine
+	srv *http.Server
 }
 
 func New(cfg *config.Config) (*server, error) {
@@ -61,7 +61,7 @@ func New(cfg *config.Config) (*server, error) {
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 
-	api := r.Group("/api")
+	api := r.Group("/api/v1")
 	hRouter := httpRouter.NewRouter(api,
 		health.NewHandler(healthSVC),
 	)
