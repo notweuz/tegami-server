@@ -1,4 +1,4 @@
-package error
+package failure
 
 import "tegami-server/internal/errs"
 
