@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"tegami-server/internal/config"
+	"tegami-server/migrations"
 
 	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog/log"
@@ -36,7 +37,7 @@ func migrate(gormDB *gorm.DB) error {
 		return fmt.Errorf("failed to get db: %w", err)
 	}
 
-	provider, err := goose.NewProvider(goose.DialectPostgres, db, nil)
+	provider, err := goose.NewProvider(goose.DialectPostgres, db, migrations.FS)
 	if err != nil {
 		return fmt.Errorf("failed to create goose provider: %w", err)
 	}
@@ -47,6 +48,6 @@ func migrate(gormDB *gorm.DB) error {
 		return err
 	}
 
-	log.Info().Int("amount", len(res)).Msg("migrated successfully")
+	log.Info().Int("total_amount", len(res)).Msg("migrated successfully")
 	return nil
 }

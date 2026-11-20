@@ -5,7 +5,6 @@ This file provides an overview of the direction this project is heading. During 
 **Legend:**
 - [x] Done
 - [ ] Planned
-- 🚧 In Progress
 
 --- 
 
@@ -29,7 +28,7 @@ In this phase, the focus is on core of the project. This includes setting up the
 In this phase, the focus is on establishing basic authorization and a user database.
 
 - [ ] **Models & Repository:**
-  - [ ] Define `User` GORM model
+  - [x] Define `User` GORM model
   - [ ] Implement User repository
 - [ ] **Authorization:**
   - [ ] Implement password hashing
