@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"tegami-server/internal/errs"
-	httpError "tegami-server/internal/transport/http/error"
+	"tegami-server/internal/transport/http/failure"
 	"tegami-server/internal/util"
 
 	"github.com/gin-gonic/gin"
@@ -61,7 +61,7 @@ func Error() gin.HandlerFunc {
 				Msg("request failed")
 		}
 
-		resp := httpError.NewResponse(appErr.Code, appErr.Message, util.MapToList(appErr.Fields, httpError.NewFieldError))
+		resp := failure.NewResponse(appErr.Code, appErr.Message, util.MapToList(appErr.Fields, failure.NewFieldError))
 
 		c.JSON(status, resp)
 	}

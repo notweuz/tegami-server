@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"net/http"
-	httpError "tegami-server/internal/transport/http/error"
+	"tegami-server/internal/transport/http/failure"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -22,7 +22,7 @@ func Recovery() gin.RecoveryFunc {
 
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
-			httpError.NewResponse(
+			failure.NewResponse(
 				"INTERNAL_SERVER_ERROR",
 				"An internal server error has occurred",
 				nil,

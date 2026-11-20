@@ -38,9 +38,9 @@ func NewHandler(svc Service) *Handler {
 //	@Produce		json
 //	@Param			id	path		string			true	"User ID"
 //	@Success		200	{object}	User			"OK"
-//	@Failure		400	{object}	error.Reponse	"No ID provided"
-//	@Failure		404	{object}	error.Reponse	"User not found"
-//	@Failure		500	{object}	error.Reponse	"Internal Server Error"
+//	@Failure		400	{object}	failure.Response	"No ID provided"
+//	@Failure		404	{object}	failure.Response	"User not found"
+//	@Failure		500	{object}	failure.Response	"Internal Server Error"
 //	@Router			/users/{id} [get]
 func (h *Handler) GetByID(c *gin.Context) {
 	var path UserID
