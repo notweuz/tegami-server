@@ -11,7 +11,7 @@ import (
 //	@version		0.1
 //	@description	API documentation for Tegami Server.
 
-//	@BasePath	/api
+//	@BasePath	/api/v1
 
 //	@securityDefinitions.apiKey	BearerAuth
 //	@in							header

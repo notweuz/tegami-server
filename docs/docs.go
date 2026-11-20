@@ -69,7 +69,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.1",
 	Host:             "",
-	BasePath:         "/api",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Tegami API",
 	Description:      "API documentation for Tegami Server.",
