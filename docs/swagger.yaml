@@ -1,5 +1,23 @@
 basePath: /api/v1
 definitions:
+  failure.FieldError:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  failure.Response:
+    properties:
+      code:
+        type: string
+      details:
+        items:
+          $ref: '#/definitions/failure.FieldError'
+        type: array
+      message:
+        type: string
+    type: object
   health.InfoResponse:
     properties:
       commit:
@@ -10,6 +28,17 @@ definitions:
         type: string
       uptime:
         example: 12.666100458s
+        type: string
+    type: object
+  transport_http_user.User:
+    properties:
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      uuid:
         type: string
     type: object
 info:
@@ -31,6 +60,37 @@ paths:
       summary: Get app health
       tags:
       - status
+  /users/{id}:
+    get:
+      description: Returns the user by their ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/transport_http_user.User'
+        "400":
+          description: No ID provided
+          schema:
+            $ref: '#/definitions/failure.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/failure.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/failure.Response'
+      summary: Get the user by ID
+      tags:
+      - user
 securityDefinitions:
   BearerAuth:
     description: Enter "Bearer <token>" (token from /auth/login).
