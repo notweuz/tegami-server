@@ -27,9 +27,9 @@ In this phase, the focus is on core of the project. This includes setting up the
 ## M1: Auth and Users.
 In this phase, the focus is on establishing basic authorization and a user database.
 
-- [ ] **Models & Repository:**
+- [x] **Models & Repository:**
   - [x] Define `User` GORM model
-  - [ ] Implement User repository
+  - [x] Implement User repository
 - [ ] **Authorization:**
   - [ ] Implement password hashing
   - [ ] Implement JWT service (Access + Refresh token generation and parsing)
