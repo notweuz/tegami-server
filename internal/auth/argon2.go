@@ -15,7 +15,7 @@ type Argon2Params struct {
 	Threads                       uint8
 }
 
-var params = Argon2Params{
+var defaultParams = Argon2Params{
 	Memory:  16 * 1024,
 	Time:    3,
 	SaltLen: 16,
@@ -33,18 +33,18 @@ func generateSalt(length uint32) ([]byte, error) {
 }
 
 func HashPassword(password string) (string, error) {
-	salt, err := generateSalt(params.SaltLen)
+	salt, err := generateSalt(defaultParams.SaltLen)
 	if err != nil {
 		return "", fmt.Errorf("hash password: %w", err)
 	}
 
-	hash := argon2.IDKey([]byte(password), salt, params.Time, params.Memory, params.Threads, params.KeyLen)
+	hash := argon2.IDKey([]byte(password), salt, defaultParams.Time, defaultParams.Memory, defaultParams.Threads, defaultParams.KeyLen)
 
 	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
 	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s",
-		argon2.Version, params.Memory, params.Time, params.Threads, b64Salt, b64Hash)
+		argon2.Version, defaultParams.Memory, defaultParams.Time, defaultParams.Threads, b64Salt, b64Hash)
 
 	return encodedHash, nil
 }
