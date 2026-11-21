@@ -32,6 +32,7 @@ In this phase, the focus is on establishing basic authorization and a user datab
   - [x] Implement User repository
 - [ ] **Authorization:**
   - [x] Implement password hashing
+  - [ ] Add hashing params to config (`threads` and `memory` for argon2)
   - [ ] Implement JWT service (Access + Refresh token generation and parsing)
   - [ ] Create `POST /api/v1/auth/register` and `POST /api/v1/auth/login` handlers
   - [ ] Add Auth middleware to validate Bearer token and inject `user_id` into `gin.Context`
