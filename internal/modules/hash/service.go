@@ -35,8 +35,11 @@ func (s *service) HashPassword(ctx context.Context, password string) (string, er
 	if err := addToSemaphore(ctx, s.semaphore); err != nil {
 		return "", fmt.Errorf("hash password: %w", err)
 	}
-
 	defer releaseFromSemaphore(s.semaphore)
+
+	if err := ctx.Err(); err != nil {
+		return "", fmt.Errorf("hash password: %w", err)
+	}
 
 	salt, err := generateSalt(s.cfg.Argon2SaltLen)
 	if err != nil {
@@ -63,6 +66,10 @@ func (s *service) VerifyPassword(ctx context.Context, password, encodedHash stri
 		return false, fmt.Errorf("verify password: %w", err)
 	}
 	defer releaseFromSemaphore(s.semaphore)
+
+	if err := ctx.Err(); err != nil {
+		return false, fmt.Errorf("verify password: %w", err)
+	}
 
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 || parts[1] != "argon2id" {
