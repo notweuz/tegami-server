@@ -34,7 +34,7 @@ func (s *service) HashPassword(password string) (string, error) {
 	addToSemaphore(s.semaphore)
 	defer releaseFromSemaphore(s.semaphore)
 
-	salt, err := generateSalt(s.cfg.Argon2KeyLen)
+	salt, err := generateSalt(s.cfg.Argon2SaltLen)
 	if err != nil {
 		return "", fmt.Errorf("hash password: %w", err)
 	}
@@ -49,7 +49,7 @@ func (s *service) HashPassword(password string) (string, error) {
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
 	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s",
-		argon2.Version, aTime, aMemory, aThreads, b64Salt, b64Hash)
+		argon2.Version, aMemory, aTime, aThreads, b64Salt, b64Hash)
 
 	return encodedHash, nil
 }
@@ -106,7 +106,7 @@ func generateSalt(length uint32) ([]byte, error) {
 }
 
 func addToSemaphore(s chan<- struct{}) {
-	s<-struct{}{}
+	s <- struct{}{}
 }
 
 func releaseFromSemaphore(s <-chan struct{}) {
