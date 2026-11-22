@@ -21,6 +21,9 @@ const (
 	defaultArgon2Memory  = 6 * 1024
 	defaultExposeSwagger = false
 	defaultGinMode       = "debug"
+	defaultArgon2SaltLen = 16
+	defaultArgon2KeyLen  = 32
+	defaultArgon2Time    = 3
 )
 
 type Config struct {
@@ -32,6 +35,9 @@ type Config struct {
 	ExposeSwagger bool   `mapstructure:"EXPOSE_SWAGGER" validate:"required"`
 	Argon2Threads uint8  `mapstructure:"ARGON2_THREADS" validate:"min=1,max=65535"`
 	Argon2Memory  uint32 `mapstructure:"ARGON2_MEMORY" validate:"min=1024"`
+	Argon2SaltLen uint32 `mapstructure:"ARGON2_SALT_LEN" validate:"min=8"`
+	Argon2KeyLen  uint32 `mapstructure:"ARGON2_KEY_LEN" validate:"min=16"`
+	Argon2Time    uint32 `mapstructure:"ARGON2_TIME" validate:"min=1"`
 }
 
 func New(path string) (*Config, error) {
@@ -49,6 +55,9 @@ func New(path string) (*Config, error) {
 	v.SetDefault("EXPOSE_SWAGGER", defaultExposeSwagger)
 	v.SetDefault("ARGON2_THREADS", defaultArgon2Threads)
 	v.SetDefault("ARGON2_MEMORY", defaultArgon2Memory)
+	v.SetDefault("ARGON2_SALT_LEN", defaultArgon2SaltLen)
+	v.SetDefault("ARGON2_KEY_LEN", defaultArgon2KeyLen)
+	v.SetDefault("ARGON2_TIME", defaultArgon2Time)
 
 	err := v.ReadInConfig()
 	if err != nil {

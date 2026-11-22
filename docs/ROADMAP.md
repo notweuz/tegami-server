@@ -33,7 +33,7 @@ In this phase, the focus is on establishing basic authorization and a user datab
 - [ ] **Authorization:**
   - [x] Implement password hashing
   - [x] Add hashing params to config (`threads` and `memory` for argon2)
-  - [ ] Add remaining hashing params to config
+  - [x] Add remaining hashing params to config
   - [ ] Replace auth/argon2 with custom HashService (use semaphore for threading)
   - [ ] Implement JWT service (Access + Refresh token generation and parsing)
   - [ ] Create `POST /api/v1/auth/register` and `POST /api/v1/auth/login` handlers
