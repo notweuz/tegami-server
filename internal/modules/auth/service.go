@@ -1,6 +1,8 @@
 package auth
 
+import "context"
+
 type HashService interface {
-	HashPassword(password string) (string, error)
-	VerifyPassword(hashedPassword, password string) (bool, error)
+	HashPassword(ctx context.Context, password string) (string, error)
+	VerifyPassword(ctx context.Context, password, encodedHash string) (bool, error)
 }

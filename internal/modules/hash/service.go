@@ -1,6 +1,7 @@
 package hash
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/subtle"
 	"encoding/base64"
@@ -30,8 +31,11 @@ func NewService(cfg *config.Config) *service {
 	}
 }
 
-func (s *service) HashPassword(password string) (string, error) {
-	addToSemaphore(s.semaphore)
+func (s *service) HashPassword(ctx context.Context, password string) (string, error) {
+	if err := addToSemaphore(ctx, s.semaphore); err != nil {
+		return "", fmt.Errorf("hash password: %w", err)
+	}
+
 	defer releaseFromSemaphore(s.semaphore)
 
 	salt, err := generateSalt(s.cfg.Argon2SaltLen)
@@ -54,8 +58,10 @@ func (s *service) HashPassword(password string) (string, error) {
 	return encodedHash, nil
 }
 
-func (s *service) VerifyPassword(password, encodedHash string) (bool, error) {
-	addToSemaphore(s.semaphore)
+func (s *service) VerifyPassword(ctx context.Context, password, encodedHash string) (bool, error) {
+	if err := addToSemaphore(ctx, s.semaphore); err != nil {
+		return false, fmt.Errorf("verify password: %w", err)
+	}
 	defer releaseFromSemaphore(s.semaphore)
 
 	parts := strings.Split(encodedHash, "$")
@@ -105,8 +111,13 @@ func generateSalt(length uint32) ([]byte, error) {
 	return salt, nil
 }
 
-func addToSemaphore(s chan<- struct{}) {
-	s <- struct{}{}
+func addToSemaphore(ctx context.Context, s chan<- struct{}) error {
+	select {
+	case s <- struct{}{}:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 }
 
 func releaseFromSemaphore(s <-chan struct{}) {
