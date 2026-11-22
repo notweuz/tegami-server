@@ -1,4 +1,4 @@
-package auth
+package hash
 
 import (
 	"crypto/rand"
@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"strings"
+	"tegami-server/internal/config"
 
 	"golang.org/x/crypto/argon2"
 )
@@ -15,41 +16,38 @@ type Argon2Params struct {
 	Threads                       uint8
 }
 
-var defaultParams = Argon2Params{
-	Memory:  16 * 1024,
-	Time:    3,
-	SaltLen: 16,
-	KeyLen:  32,
-	Threads: 4,
+type service struct {
+	cfg *config.Config
 }
 
-func generateSalt(length uint32) ([]byte, error) {
-	salt := make([]byte, length)
-	_, err := rand.Read(salt)
-	if err != nil {
-		return nil, ErrFailedGenerateSalt
+func NewService(cfg *config.Config) *service {
+	return &service{
+		cfg: cfg,
 	}
-	return salt, nil
 }
 
-func HashPassword(password string) (string, error) {
-	salt, err := generateSalt(defaultParams.SaltLen)
+func (s *service) HashPassword(password string) (string, error) {
+	salt, err := generateSalt(s.cfg.Argon2KeyLen)
 	if err != nil {
 		return "", fmt.Errorf("hash password: %w", err)
 	}
 
-	hash := argon2.IDKey([]byte(password), salt, defaultParams.Time, defaultParams.Memory, defaultParams.Threads, defaultParams.KeyLen)
+	aTime := s.cfg.Argon2Time
+	aMemory := s.cfg.Argon2Memory
+	aThreads := s.cfg.Argon2Threads
+
+	hash := argon2.IDKey([]byte(password), salt, aTime, aMemory, aThreads, s.cfg.Argon2KeyLen)
 
 	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
 	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s",
-		argon2.Version, defaultParams.Memory, defaultParams.Time, defaultParams.Threads, b64Salt, b64Hash)
+		argon2.Version, aTime, aMemory, aThreads, b64Salt, b64Hash)
 
 	return encodedHash, nil
 }
 
-func VerifyPassword(password, encodedHash string) (bool, error) {
+func (s *service) VerifyPassword(password, encodedHash string) (bool, error) {
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 || parts[1] != "argon2id" {
 		return false, fmt.Errorf("verify password: %w", ErrInvalidHashFormat)
@@ -86,4 +84,13 @@ func VerifyPassword(password, encodedHash string) (bool, error) {
 	comparisonHash := argon2.IDKey([]byte(password), salt, p.Time, p.Memory, p.Threads, keyLength)
 
 	return subtle.ConstantTimeCompare(decodedHash, comparisonHash) == 1, nil
+}
+
+func generateSalt(length uint32) ([]byte, error) {
+	salt := make([]byte, length)
+	_, err := rand.Read(salt)
+	if err != nil {
+		return nil, ErrFailedGenerateSalt
+	}
+	return salt, nil
 }
