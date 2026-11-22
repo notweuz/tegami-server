@@ -86,7 +86,7 @@ func (s *service) VerifyPassword(ctx context.Context, password, encodedHash stri
 
 	p := Argon2Params{}
 	if _, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.Memory, &p.Time, &p.Threads); err != nil {
-		return false, fmt.Errorf("verify password: %w", err)
+		return false, fmt.Errorf("verify password: %w: %w", err, ErrInvalidHashFormat)
 	}
 
 	if p.Time == 0 || p.Threads == 0 || p.Memory == 0 {
@@ -95,12 +95,12 @@ func (s *service) VerifyPassword(ctx context.Context, password, encodedHash stri
 
 	salt, err := base64.RawStdEncoding.DecodeString(parts[4])
 	if err != nil {
-		return false, fmt.Errorf("verify password: %w", ErrFailedDecryptSalt)
+		return false, fmt.Errorf("verify password: %w: %w", ErrFailedDecryptSalt, err)
 	}
 
 	decodedHash, err := base64.RawStdEncoding.DecodeString(parts[5])
 	if err != nil {
-		return false, fmt.Errorf("verify password: %w", ErrFailedDecryptHash)
+		return false, fmt.Errorf("verify password: %w: %w", ErrFailedDecryptHash, err)
 	}
 	keyLength := uint32(len(decodedHash))
 
