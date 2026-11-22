@@ -31,7 +31,10 @@ In this phase, the focus is on establishing basic authorization and a user datab
   - [x] Define `User` GORM model
   - [x] Implement User repository
 - [ ] **Authorization:**
-  - [ ] Implement password hashing
+  - [x] Implement password hashing
+  - [x] Add hashing params to config (`threads` and `memory` for argon2)
+  - [ ] Add remaining hashing params to config
+  - [ ] Replace auth/argon2 with custom HashService (use semaphore for threading)
   - [ ] Implement JWT service (Access + Refresh token generation and parsing)
   - [ ] Create `POST /api/v1/auth/register` and `POST /api/v1/auth/login` handlers
   - [ ] Add Auth middleware to validate Bearer token and inject `user_id` into `gin.Context`

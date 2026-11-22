@@ -17,6 +17,8 @@ const (
 	defaultAppPort       = 8080
 	defaultLogLevel      = "info"
 	defaultDatabaseDSN   = "host=localhost user=postgres password=postgres dbname=tegami-server port=5432 sslmode=disable"
+	defaultArgon2Threads = 4
+	defaultArgon2Memory  = 6 * 1024
 	defaultExposeSwagger = false
 	defaultGinMode       = "debug"
 )
@@ -28,6 +30,8 @@ type Config struct {
 	AppPort       int    `mapstructure:"APP_PORT" validate:"min=1,max=65535"`
 	GinMode       string `mapstructure:"GIN_MODE" validate:"oneof=debug release test"`
 	ExposeSwagger bool   `mapstructure:"EXPOSE_SWAGGER" validate:"required"`
+	Argon2Threads uint8  `mapstructure:"ARGON2_THREADS" validate:"min=1,max=65535"`
+	Argon2Memory  uint32 `mapstructure:"ARGON2_MEMORY" validate:"min=1024"`
 }
 
 func New(path string) (*Config, error) {
@@ -43,6 +47,8 @@ func New(path string) (*Config, error) {
 	v.SetDefault("DATABASE_DSN", defaultDatabaseDSN)
 	v.SetDefault("GIN_MODE", defaultGinMode)
 	v.SetDefault("EXPOSE_SWAGGER", defaultExposeSwagger)
+	v.SetDefault("ARGON2_THREADS", defaultArgon2Threads)
+	v.SetDefault("ARGON2_MEMORY", defaultArgon2Memory)
 
 	err := v.ReadInConfig()
 	if err != nil {
