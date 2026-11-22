@@ -11,22 +11,29 @@ import (
 	"golang.org/x/crypto/argon2"
 )
 
+const semaphoreSize = 8
+
 type Argon2Params struct {
 	Memory, Time, SaltLen, KeyLen uint32
 	Threads                       uint8
 }
 
 type service struct {
-	cfg *config.Config
+	cfg       *config.Config
+	semaphore chan struct{}
 }
 
 func NewService(cfg *config.Config) *service {
 	return &service{
-		cfg: cfg,
+		cfg:       cfg,
+		semaphore: make(chan struct{}, semaphoreSize),
 	}
 }
 
 func (s *service) HashPassword(password string) (string, error) {
+	addToSemaphore(s.semaphore)
+	defer releaseFromSemaphore(s.semaphore)
+
 	salt, err := generateSalt(s.cfg.Argon2KeyLen)
 	if err != nil {
 		return "", fmt.Errorf("hash password: %w", err)
@@ -48,6 +55,9 @@ func (s *service) HashPassword(password string) (string, error) {
 }
 
 func (s *service) VerifyPassword(password, encodedHash string) (bool, error) {
+	addToSemaphore(s.semaphore)
+	defer releaseFromSemaphore(s.semaphore)
+
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 || parts[1] != "argon2id" {
 		return false, fmt.Errorf("verify password: %w", ErrInvalidHashFormat)
@@ -93,4 +103,12 @@ func generateSalt(length uint32) ([]byte, error) {
 		return nil, ErrFailedGenerateSalt
 	}
 	return salt, nil
+}
+
+func addToSemaphore(s chan<- struct{}) {
+	s<-struct{}{}
+}
+
+func releaseFromSemaphore(s <-chan struct{}) {
+	<-s
 }
