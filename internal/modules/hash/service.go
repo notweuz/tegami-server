@@ -71,42 +71,21 @@ func (s *service) VerifyPassword(ctx context.Context, password, encodedHash stri
 		return false, fmt.Errorf("verify password: %w", err)
 	}
 
-	parts := strings.Split(encodedHash, "$")
-	if len(parts) != 6 || parts[1] != "argon2id" {
-		return false, fmt.Errorf("verify password: %w", ErrInvalidHashFormat)
-	}
-
-	var version int
-	if _, err := fmt.Sscanf(parts[2], "v=%d", &version); err != nil {
-		return false, fmt.Errorf("verify password: %w", ErrIncompatibleArgonVersion)
-	}
-	if version != argon2.Version {
-		return false, fmt.Errorf("verify password: %w", ErrIncompatibleArgonVersion)
-	}
-
-	p := Argon2Params{}
-	if _, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.Memory, &p.Time, &p.Threads); err != nil {
-		return false, fmt.Errorf("verify password: %w: %w", err, ErrInvalidHashFormat)
-	}
-
-	if p.Time == 0 || p.Threads == 0 || p.Memory == 0 {
-		return false, fmt.Errorf("verify password: %w", ErrInvalidHashFormat)
-	}
-
-	salt, err := base64.RawStdEncoding.DecodeString(parts[4])
+	p, salt, hash, err := parseArgon2Hash(encodedHash)
 	if err != nil {
-		return false, fmt.Errorf("verify password: %w: %w", ErrFailedDecryptSalt, err)
+		return false, fmt.Errorf("verify password: %w", err)
 	}
 
-	decodedHash, err := base64.RawStdEncoding.DecodeString(parts[5])
-	if err != nil {
-		return false, fmt.Errorf("verify password: %w: %w", ErrFailedDecryptHash, err)
-	}
-	keyLength := uint32(len(decodedHash))
+	comparisonHash := argon2.IDKey(
+		[]byte(password),
+		salt,
+		p.Time,
+		p.Memory,
+		p.Threads,
+		uint32(len(hash)),
+	)
 
-	comparisonHash := argon2.IDKey([]byte(password), salt, p.Time, p.Memory, p.Threads, keyLength)
-
-	return subtle.ConstantTimeCompare(decodedHash, comparisonHash) == 1, nil
+	return subtle.ConstantTimeCompare(hash, comparisonHash) == 1, nil
 }
 
 func generateSalt(length uint32) ([]byte, error) {
@@ -129,4 +108,45 @@ func addToSemaphore(ctx context.Context, s chan<- struct{}) error {
 
 func releaseFromSemaphore(s <-chan struct{}) {
 	<-s
+}
+
+func parseArgon2Hash(encodedHash string) (Argon2Params, []byte, []byte, error) {
+	parts := strings.Split(encodedHash, "$")
+	if len(parts) != 6 || parts[0] != "" || parts[1] != "argon2id" {
+		return Argon2Params{}, nil, nil, ErrInvalidHashFormat
+	}
+
+	var version int
+	if _, err := fmt.Sscanf(parts[2], "v=%d", &version); err != nil || version != argon2.Version {
+		return Argon2Params{}, nil, nil, ErrIncompatibleArgonVersion
+	}
+
+	var p Argon2Params
+	if _, err := fmt.Sscanf(
+		parts[3],
+		"m=%d,t=%d,p=%d",
+		&p.Memory, &p.Time, &p.Threads,
+	); err != nil {
+		return Argon2Params{}, nil, nil, ErrInvalidHashFormat
+	}
+
+	if p.Memory == 0 || p.Time == 0 || p.Threads == 0 {
+		return Argon2Params{}, nil, nil, ErrInvalidHashFormat
+	}
+
+	salt, err := base64.RawStdEncoding.DecodeString(parts[4])
+	if err != nil {
+		return Argon2Params{}, nil, nil, fmt.Errorf("%w: %w", ErrFailedDecryptSalt, err)
+	}
+
+	hash, err := base64.RawStdEncoding.DecodeString(parts[5])
+	if err != nil {
+		return Argon2Params{}, nil, nil, fmt.Errorf("%w: %w", ErrFailedDecryptHash, err)
+	}
+
+	if len(salt) == 0 || len(hash) == 0 {
+		return Argon2Params{}, nil, nil, ErrInvalidHashFormat
+	}
+
+	return p, salt, hash, nil
 }
