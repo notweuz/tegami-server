@@ -17,6 +17,7 @@ var (
 
 type Service interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*user.User, error)
+	GetByUsername(ctx context.Context, username string) (*user.User, error)
 	Create(ctx context.Context, users ...*user.User) error
 }
 
