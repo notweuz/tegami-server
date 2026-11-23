@@ -38,7 +38,11 @@ In this phase, the focus is on establishing basic authorization and a user datab
     - [x] Implement semaphore for threading
   - [x] Implement JWT service (Access + Refresh token generation and parsing)
   - [ ] Create `POST /api/v1/auth/register` and `POST /api/v1/auth/login` handlers
+    - [x] Create Auth Service with `Register` and `Login` functions
+    - [ ] Create Auth Handler
+    - [ ] Implement User Service (needed for auth service to work), interface should already exist at this point
   - [ ] Add Auth middleware to validate Bearer token and inject `user_id` into `gin.Context`
+  - [ ] Separate DTOs from service layer. Service layer should request it's own structs 
 - [ ] **Profiles & Discovery:**
   - [ ] Create `GET /api/v1/users/me` and `PATCH /api/v1/users/me` handlers
   - [ ] Create `GET /api/v1/users?q=...` endpoint for searching users by username
