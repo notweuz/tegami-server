@@ -32,7 +32,7 @@ func NewHandler(service Service) *Handler {
 func (h *Handler) Register(c *gin.Context) {
 	var req Credentials
 	if err := c.ShouldBindJSON(&req); err != nil {
-		_ = c.Error(ErrBadRequest)
+		_ = c.Error(ErrBadRequest) // TODO: proper validation error binding
 		return
 	}
 	token, err := h.service.Register(c.Request.Context(), req)
@@ -46,7 +46,7 @@ func (h *Handler) Register(c *gin.Context) {
 func (h *Handler) Login(c *gin.Context) {
 	var req Credentials
 	if err := c.ShouldBindJSON(&req); err != nil {
-		_ = c.Error(ErrBadRequest)
+		_ = c.Error(ErrBadRequest) // TODO: proper validation error binding
 		return
 	}
 	token, err := h.service.Login(c.Request.Context(), req)

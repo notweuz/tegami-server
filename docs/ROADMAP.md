@@ -41,6 +41,7 @@ In this phase, the focus is on establishing basic authorization and a user datab
     - [x] Create Auth Service with `Register` and `Login` functions
     - [x] Create Auth Handler
     - [ ] Implement User Service (needed for auth service to work), interface should already exist at this point
+  - [ ] Add Validation error bindings, and use them in User and Auth handler
   - [ ] Add Auth middleware to validate Bearer token and inject `user_id` into `gin.Context`
   - [ ] Separate DTOs from service layer. Service layer should request it's own structs 
 - [ ] **Profiles & Discovery:**
