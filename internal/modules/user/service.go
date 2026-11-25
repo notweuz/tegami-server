@@ -30,7 +30,7 @@ func (s *service) GetByID(ctx context.Context, id uuid.UUID) (*User, error) {
 		log.Error().Err(err).Str("uuid", id.String()).Msg("user service get by id")
 		return nil, fmt.Errorf("user service get by id: %w", err)
 	}
-	log.Info().Str("id", id.String()).Msg("user service get by id found user")
+	log.Debug().Str("id", id.String()).Msg("user service get by id found user")
 	return user, nil
 }
 
@@ -40,7 +40,7 @@ func (s *service) GetByUsername(ctx context.Context, username string) (*User, er
 		log.Error().Err(err).Str("username", username).Msg("user service get by username")
 		return nil, fmt.Errorf("user service get by username: %w", err)
 	}
-	log.Info().Str("id", user.ID.String()).Msg("user service get by username found user")
+	log.Debug().Str("id", user.ID.String()).Msg("user service get by username found user")
 	return user, nil
 }
 
@@ -49,6 +49,6 @@ func (s *service) Create(ctx context.Context, users ...*User) error {
 		log.Error().Err(err).Msg("create users failed")
 		return fmt.Errorf("user service create: %w", err)
 	}
-	log.Info().Int("amount", len(users)).Msg("user service successfully created user(s)")
+	log.Debug().Int("amount", len(users)).Msg("user service successfully created user(s)")
 	return nil
 }
