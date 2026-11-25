@@ -21,9 +21,9 @@ func (r *repository) GetByID(ctx context.Context, id uuid.UUID) (*User, error) {
 	var user User
 	if err := r.db.WithContext(ctx).First(&user, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("get user by id %d: %w", id, ErrUserNotFound)
+			return nil, fmt.Errorf("get user by id %s: %w", id, ErrUserNotFound)
 		}
-		return nil, fmt.Errorf("get user by id %d: %w", id, err)
+		return nil, fmt.Errorf("get user by id %s: %w", id, err)
 	}
 	return &user, nil
 }
